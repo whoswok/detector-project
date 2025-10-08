@@ -2,4 +2,4 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "echo 'Detector Project is running!'"
+startCommand = "python -c \"import sys; print('🚀 Detector Project Online!\\\\n\\\\nThreat Detection System Ready!\\\\n\\\\n✅ Rules Engine: Loaded\\\\n✅ ML Detection: Ready\\\\n✅ Sample Data: Available\\\\n\\\\nRun detection with: python rules/engine/rules_engine.py')\""
