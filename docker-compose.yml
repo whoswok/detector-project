@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: detector-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - detector-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: detector-logstash
+    volumes:
+      - ./logs:/usr/share/logs:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./logstash/config:/usr/share/logstash/config:ro
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      - LS_JAVA_OPTS=-Xms256m -Xmx256m
+    networks:
+      - detector-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: detector-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - detector-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Parser service (to be implemented)
+  parser:
+    build: ./parser
+    container_name: detector-parser
+    volumes:
+      - ./logs:/app/logs:ro
+      - ./rules:/app/rules:ro
+    networks:
+      - detector-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+
+  # Sample log generator for testing
+  log-generator:
+    build: ./log-generator
+    container_name: detector-log-generator
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - detector-network
+    profiles:
+      - tools
+
+volumes:
+  elasticsearch-data:
+    driver: local
+
+networks:
+  detector-network:
+    driver: bridge

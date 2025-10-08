@@ -1,0 +1,150 @@
+- id: "ssh_brute_force"
+  name: "SSH Brute Force Attack"
+  description: "Multiple failed SSH login attempts from same IP"
+  severity: "high"
+  category: "authentication"
+  conditions:
+    type: "composite"
+    operator: "AND"
+    conditions:
+      - type: "field_match"
+        field: "message"
+        value: "Failed password"
+        operator: "contains"
+      - type: "field_match"
+        field: "source"
+        value: "sshd"
+        operator: "contains"
+  actions: ["alert", "block_ip"]
+  tags: ["ssh", "brute-force", "authentication"]
+
+- id: "high_cpu_usage"
+  name: "High CPU Usage"
+  description: "CPU usage exceeds 90%"
+  severity: "medium"
+  category: "system"
+  conditions:
+    type: "field_match"
+    field: "cpu_percent"
+    value: 90
+    operator: "greater_than"
+  actions: ["alert", "scale_resources"]
+  tags: ["performance", "cpu", "monitoring"]
+
+- id: "security_breach"
+  name: "Security Breach Detected"
+  description: "Critical security events"
+  severity: "critical"
+  category: "security"
+  conditions:
+    type: "composite"
+    operator: "OR"
+    conditions:
+      - type: "field_match"
+        field: "message"
+        value: "Security breach detected"
+        operator: "contains"
+      - type: "field_match"
+        field: "threat_level"
+        value: "high"
+        operator: "equals"
+  actions: ["alert", "escalate", "investigate"]
+  tags: ["security", "breach", "critical"]
+
+- id: "db_connection_failure"
+  name: "Database Connection Failure"
+  description: "Multiple database connection failures"
+  severity: "medium"
+  category: "application"
+  conditions:
+    type: "field_match"
+    field: "message"
+    value: "Database connection failed"
+    operator: "contains"
+  actions: ["alert", "restart_service"]
+  tags: ["database", "connection", "failure"]
+
+- id: "suspicious_login_time"
+  name: "Suspicious Login Time"
+  description: "Login attempts outside normal business hours"
+  severity: "low"
+  category: "authentication"
+  conditions:
+    type: "time_window"
+    field: "timestamp"
+    window_seconds: 300
+    min_occurrences: 3
+  actions: ["log", "monitor"]
+  tags: ["authentication", "time-based", "suspicious"]
+
+- id: "disk_space_low"
+  name: "Low Disk Space"
+  description: "Disk usage exceeds 85%"
+  severity: "medium"
+  category: "system"
+  conditions:
+    type: "field_match"
+    field: "disk_usage_percent"
+    value: 85
+    operator: "greater_than"
+  actions: ["alert", "cleanup_logs"]
+  tags: ["storage", "disk", "capacity"]
+
+- id: "slow_response_time"
+  name: "Slow Response Time"
+  description: "API response time exceeds 1000ms"
+  severity: "low"
+  category: "performance"
+  conditions:
+    type: "field_match"
+    field: "response_time_ms"
+    value: 1000
+    operator: "greater_than"
+  actions: ["log", "optimize"]
+  tags: ["performance", "api", "latency"]
+
+- id: "multiple_login_failures"
+  name: "Multiple Login Failures"
+  description: "More than 5 failed login attempts in 10 minutes"
+  severity: "high"
+  category: "authentication"
+  conditions:
+    type: "time_window"
+    field: "timestamp"
+    window_seconds: 600
+    min_occurrences: 5
+  actions: ["alert", "block_ip", "notify_security"]
+  tags: ["authentication", "brute-force", "security"]
+
+- id: "payment_failure"
+  name: "Payment Processing Failure"
+  description: "Payment transaction failures"
+  severity: "high"
+  category: "application"
+  conditions:
+    type: "field_match"
+    field: "message"
+    value: "Payment processing failed"
+    operator: "contains"
+  actions: ["alert", "retry_payment", "notify_customer"]
+  tags: ["payment", "financial", "critical"]
+
+- id: "unauthorized_access"
+  name: "Unauthorized Access Attempt"
+  description: "Access attempts to restricted resources"
+  severity: "critical"
+  category: "security"
+  conditions:
+    type: "composite"
+    operator: "AND"
+    conditions:
+      - type: "field_match"
+        field: "level"
+        value: "error"
+        operator: "equals"
+      - type: "field_match"
+        field: "message"
+        value: "Unauthorized access"
+        operator: "contains"
+  actions: ["alert", "block_ip", "investigate"]
+  tags: ["security", "access-control", "critical"]
