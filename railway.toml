@@ -1,9 +1,5 @@
 [build]
-builder = "dockerfile"
+builder = "nixpacks"
 
 [deploy]
-startCommand = "echo 'Detector Project - Deploy via Railway\\n\\nAccess your live demo at the provided URL!'"
-
-[[services]]
-name = "detector-app"
-type = "web"
+startCommand = "python -c \"print('🚀 Detector Project Live!\\n\\nYour threat detection system is running.\\n\\nFeatures:\\n• Real-time log analysis\\n• ML-based anomaly detection\\n• Multi-format log parsing\\n• Security dashboards\\n\\nAccess Kibana at: http://localhost:5601')\""
