@@ -1,0 +1,48 @@
+services:
+  - builder:
+      buildCommand: "echo 'No build required for demo'"
+      startCommand: "echo 'Services will be started via docker-compose'"
+
+  - type: web
+    name: detector-app
+    env: docker-compose
+    buildCommand: ""
+    startCommand: |
+      # Install Docker Compose
+      curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      chmod +x /usr/local/bin/docker-compose
+
+      # Create demo script
+      cat > demo.sh << 'EOF'
+      #!/bin/bash
+      echo "🚀 Detector Project Live Demo"
+      echo "Starting services..."
+
+      # Start core services (without parser service for demo)
+      docker-compose up -d elasticsearch kibana
+
+      # Wait for services
+      sleep 45
+
+      echo "✅ Services started!"
+      echo "🌐 Kibana Dashboard: $(echo $RAILWAY_STATIC_URL | sed 's|https://||')"
+      echo "🔍 Elasticsearch: $(echo $RAILWAY_STATIC_URL | sed 's|https://||'):9200"
+      echo ""
+      echo "📊 Demo Features:"
+      echo "• Real-time log processing simulation"
+      echo "• ML-based anomaly detection"
+      echo "• Interactive Kibana dashboards"
+      echo "• Multi-channel alerting system"
+      EOF
+
+      chmod +x demo.sh
+
+      # Start services
+      docker-compose up -d elasticsearch kibana
+
+      # Create startup message
+      echo "🎉 Detector Project Deployed Successfully!"
+      echo "📊 Kibana: https://$(echo $RAILWAY_STATIC_URL | cut -d'/' -f3)"
+      echo "🔍 Elasticsearch: https://$(echo $RAILWAY_STATIC_URL | cut -d'/' -f3):9200"
+      echo ""
+      echo "🚀 Demo ready! Access the dashboard above."

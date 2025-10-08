@@ -495,7 +495,7 @@ def main():
         if matches:
             print(f"\nLog: {log['message']}")
             for match in matches:
-                print(f"  -> MATCH: {match.rule_name} (confidence: {match.confidence".2f"})")
+                print(f"  -> MATCH: {match.rule_name} (confidence: {match.confidence:.2f})")
         else:
             print(f"\nLog: {log['message']} -> No matches")
 

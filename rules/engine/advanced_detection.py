@@ -181,7 +181,7 @@ class AnomalyDetector:
 
             confidence = min(1.0, anomaly_score * 2)  # Scale confidence
 
-            explanation = f"Isolation Forest anomaly score: {anomaly_score".3f"}"
+            explanation = f"Isolation Forest anomaly score: {anomaly_score:.3f}"
 
             return AnomalyScore(
                 score=anomaly_score,
@@ -264,7 +264,7 @@ class BehavioralAnalyzer:
                                 confidence=confidence,
                                 algorithm="behavioral_analysis",
                                 features_used=[field],
-                                explanation=f"Value {value} deviates {z_score".2f"} standard deviations from baseline"
+                                explanation=f"Value {value} deviates {z_score:.2f} standard deviations from baseline"
                             ))
                 except (ValueError, TypeError):
                     continue
@@ -291,7 +291,7 @@ class BehavioralAnalyzer:
                             confidence=min(1.0, deviation / 5.0),
                             algorithm="activity_pattern",
                             features_used=['hourly_activity'],
-                            explanation=f"Unusual activity level for hour {current_hour}: {deviation".2f"}x deviation"
+                            explanation=f"Unusual activity level for hour {current_hour}: {deviation:.2f}x deviation"
                         ))
 
         return anomalies
@@ -486,7 +486,7 @@ def main():
         print(f"\nLog: {log['message']}")
         if anomalies:
             for anomaly in anomalies:
-                print(f"  -> ANOMALY: {anomaly.algorithm} (score: {anomaly.score".3f"})")
+                print(f"  -> ANOMALY: {anomaly.algorithm} (score: {anomaly.score:.3f})")
                 print(f"     Explanation: {anomaly.explanation}")
         else:
             print("  -> Normal")

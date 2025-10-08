@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "./docker-compose.yml",
+      "use": "@railway/dockerfile"
+    }
+  ],
+  "deploy": {
+    "startCommand": "docker-compose up -d elasticsearch kibana && sleep 30 && echo '🎉 Detector Demo Deployed! Kibana: $RENDER_EXTERNAL_URL:5601'"
+  },
+  "envVars": [
+    {
+      "key": "ELASTICSEARCH_HOST",
+      "value": "localhost"
+    },
+    {
+      "key": "KIBANA_HOST",
+      "value": "0.0.0.0"
+    }
+  ]
+}
